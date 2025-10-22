@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Slideshow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: #000;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slideshow-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    /* Loading indicator */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow-container">
+    <div class="loading" id="loading">Loading images...</div>
+  </div>
+
+  <script>
+    const images = [
+      "Images/Segment_B_miss.png",
+      "Images/Segment_A_miss.png", 
+      "Images/Earth_icon_missing.png",
+      "Images/DOT3_miss.png",
+      "Images/Alaram_icon_missing.png",
+      "Images/Battery_icon_miss.png",
+      "Images/BILL_icon_missing.png",
+      "Images/blank_display.png",
+      "Images/BLUETOOTH_icon_missing.png",
+      "Images/BYP_icon&LED1,LED2_off.png",
+      "Images/Colon&DIGIT9,LED2_off.png",
+      "Images/correct_image.png",
+      "Images/DATE_icon_missing.png",
+      "Images/digit1&Lasticon_missing.png",
+      "Images/Digit6_miss.png",
+      "Images/DOT_1&LED1,LED2_off.png",
+      "Images/RUPEE_icon&LED1,LED2_off.png",
+      "Images/Segment_F_LED1.png",
+      "Images/Segment_G_LED1.png",
+      "Images/Signal2&LED1,LED2_off.png",
+      "Images/Wicon&LED2_off.png"
+    ];
+
+    let currentIndex = 0;
+    let slidesCreated = false;
+    const container = document.querySelector('.slideshow-container');
+    const loading = document.getElementById('loading');
+
+    // Preload images and create slides
+    function preloadImages() {
+      let loadedCount = 0;
+      const totalImages = images.length;
+
+      images.forEach((imagePath, index) => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            createSlides();
+            startSlideshow();
+          }
+        };
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${imagePath}`);
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            createSlides();
+            startSlideshow();
+          }
+        };
+        img.src = imagePath;
+      });
+    }
+
+    function createSlides() {
+      loading.style.display = 'none';
+      
+      images.forEach((imagePath, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        if (index === 0) slide.classList.add('active');
+        
+        const img = document.createElement('img');
+        img.src = imagePath;
+        img.alt = `Slide ${index + 1}`;
+        
+        slide.appendChild(img);
+        container.appendChild(slide);
+      });
+      
+      slidesCreated = true;
+    }
+
+    function nextSlide() {
+      if (!slidesCreated) return;
+      
+      const slides = document.querySelectorAll('.slide');
+      slides[currentIndex].classList.remove('active');
+      
+      currentIndex = (currentIndex + 1) % slides.length;
+      slides[currentIndex].classList.add('active');
+    }
+
+    function startSlideshow() {
+      setInterval(nextSlide, 1000);
+    }
+
+    // Start preloading images when page loads
+    window.addEventListener('load', preloadImages);
+  </script>
+</body>
+</html>
