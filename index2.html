@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Slideshow - Images2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: #000;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slideshow-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    /* Loading indicator */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow-container">
+    <div class="loading" id="loading">Loading images...</div>
+  </div>
+
+  <script>
+    const images = [
+      "Images2/alarm.jpg",
+      "Images2/battery.jpg",
+      "Images2/bill.jpg",
+      "Images2/blank_display.png",
+      "Images2/BLUETOOTH_icon_missing.png",
+      "Images2/BYP_icon&LED1,LED2_off.png",
+      "Images2/caution.jpg",
+      "Images2/Clock.jpg",
+      "Images2/colon 2.jpg",
+      "Images2/Colon&DIGIT9,LED2_off.png",
+      "Images2/correct_image.png",
+      "Images2/CUM.jpg",
+      "Images2/DATE_icon_missing.png",
+      "Images2/digit 10.jpg",
+      "Images2/digit 2.jpg",
+      "Images2/digit 3.jpg",
+      "Images2/digit 4.jpg",
+      "Images2/digit 5.jpg",
+      "Images2/digit 6.jpg",
+      "Images2/digit 7.jpg",
+      "Images2/digit 8.jpg",
+      "Images2/digit1&Lasticon_missing.png",
+      "Images2/diode.jpg",
+      "Images2/DOT_1&LED1,LED2_off.png",
+      "Images2/dot2.jpg",
+      "Images2/dot3.jpg",
+      "Images2/dot4.jpg",
+      "Images2/dot5.jpg",
+      "Images2/earth.jpg",
+      "Images2/h.jpg",
+      "Images2/k.jpg",
+      "Images2/magnet.jpg",
+      "Images2/MD.jpg",
+      "Images2/MDM.jpg",
+      "Images2/NET.jpg",
+      "Images2/NMND.jpg",
+      "Images2/PF.jpg",
+      "Images2/PP.jpg",
+      "Images2/r.jpg",
+      "Images2/rev.jpg",
+      "Images2/RUPEE_icon&LED1,LED2_off.png",
+      "Images2/Segment A (1).jpg",
+      "Images2/Segment A (2).jpg",
+      "Images2/Segment A (3).jpg",
+      "Images2/Segment A (4).jpg",
+      "Images2/Segment A (5).jpg",
+      "Images2/Segment A (6).jpg",
+      "Images2/Segment A (7).jpg",
+      "Images2/Segment A.jpg",
+      "Images2/Segment B (1).jpg",
+      "Images2/Segment B (2).jpg",
+      "Images2/Segment B (3).jpg",
+      "Images2/Segment B (4).jpg",
+      "Images2/Segment B (5).jpg",
+      "Images2/Segment B (6).jpg",
+      "Images2/Segment B (7).jpg",
+      "Images2/Segment B.jpg",
+      "Images2/Segment C (1).jpg",
+      "Images2/Segment C (2).jpg",
+      "Images2/Segment C (3).jpg",
+      "Images2/Segment C (4).jpg",
+      "Images2/Segment C (5).jpg",
+      "Images2/Segment C (6).jpg",
+      "Images2/Segment C (7).jpg",
+      "Images2/Segment C.jpg",
+      "Images2/Segment D (1).jpg",
+      "Images2/Segment D (2).jpg",
+      "Images2/Segment D (3).jpg",
+      "Images2/Segment D (4).jpg",
+      "Images2/Segment D (5).jpg",
+      "Images2/Segment D (6).jpg",
+      "Images2/Segment D (7).jpg",
+      "Images2/Segment D.jpg",
+      "Images2/Segment E (1).jpg",
+      "Images2/Segment E (2).jpg",
+      "Images2/Segment E (3).jpg",
+      "Images2/Segment E (4).jpg",
+      "Images2/Segment E (5).jpg",
+      "Images2/Segment E (6).jpg",
+      "Images2/Segment E (7).jpg",
+      "Images2/Segment E (8).jpg",
+      "Images2/Segment E.jpg",
+      "Images2/Segment F (1).jpg",
+      "Images2/Segment F (2).jpg",
+      "Images2/Segment F (3).jpg",
+      "Images2/Segment F (4).jpg",
+      "Images2/Segment F (5).jpg",
+      "Images2/Segment F (6).jpg",
+      "Images2/Segment F.jpg",
+      "Images2/Segment G (1).jpg",
+      "Images2/Segment G (2).jpg",
+      "Images2/Segment G (3).jpg",
+      "Images2/Segment G (4).jpg",
+      "Images2/Segment G (5).jpg",
+      "Images2/Segment G (6).jpg",
+      "Images2/Segment G.jpg",
+      "Images2/Segment_F_LED1.png",
+      "Images2/Segment_G_LED1.png",
+      "Images2/signal 1.jpg",
+      "Images2/Signal2&LED1,LED2_off.png",
+      "Images2/switch.jpg",
+      "Images2/T.jpg",
+      "Images2/thermometer.jpg",
+      "Images2/time.jpg",
+      "Images2/TOP.jpg",
+      "Images2/Wicon&LED2_off.png",
+      "Images2/z.jpg"
+    ];
+
+    let currentIndex = 0;
+    let slidesCreated = false;
+    const container = document.querySelector('.slideshow-container');
+    const loading = document.getElementById('loading');
+
+    // Preload images and create slides
+    function preloadImages() {
+      let loadedCount = 0;
+      const totalImages = images.length;
+
+      images.forEach((imagePath, index) => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            createSlides();
+            startSlideshow();
+          }
+        };
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${imagePath}`);
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            createSlides();
+            startSlideshow();
+          }
+        };
+        img.src = imagePath;
+      });
+    }
+
+    function createSlides() {
+      loading.style.display = 'none';
+      
+      images.forEach((imagePath, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        if (index === 0) slide.classList.add('active');
+        
+        const img = document.createElement('img');
+        img.src = imagePath;
+        img.alt = `Slide ${index + 1}`;
+        
+        slide.appendChild(img);
+        container.appendChild(slide);
+      });
+      
+      slidesCreated = true;
+    }
+
+    function nextSlide() {
+      if (!slidesCreated) return;
+      
+      const slides = document.querySelectorAll('.slide');
+      slides[currentIndex].classList.remove('active');
+      
+      currentIndex = (currentIndex + 1) % slides.length;
+      slides[currentIndex].classList.add('active');
+    }
+
+    function startSlideshow() {
+      setInterval(nextSlide, 5000);
+    }
+
+    // Start preloading images when page loads
+    window.addEventListener('load', preloadImages);
+  </script>
+</body>
+</html>
