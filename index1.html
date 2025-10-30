@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Slideshow - Images1</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background-color: #000;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slideshow-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    /* Loading indicator */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow-container">
+    <div class="loading" id="loading">Loading images...</div>
+  </div>
+
+  <script>
+    const images = [
+      "Images1/alaram_icon.jpg",
+      "Images1/battery_icon.jpg",
+      "Images1/bill_icon.jpg",
+      "Images1/caution_icon.jpg",
+      "Images1/Clock_icon.jpg",
+      "Images1/colon_2.jpg",
+      "Images1/CUM_icon.jpg",
+      "Images1/digit_10.jpg",
+      "Images1/digit_2.jpg",
+      "Images1/digit_3.jpg",
+      "Images1/digit_4.jpg",
+      "Images1/digit_5.jpg",
+      "Images1/digit_6.jpg",
+      "Images1/digit_7.jpg",
+      "Images1/digit_8.jpg",
+      "Images1/diode.jpg",
+      "Images1/dot_2.jpg",
+      "Images1/dot_3.jpg",
+      "Images1/dot_4.jpg",
+      "Images1/dot_5.jpg",
+      "Images1/Earth_icon.jpg",
+      "Images1/earth_symbol.jpg",
+      "Images1/h_icon.jpg",
+      "Images1/k_icon.jpg",
+      "Images1/magnet_icon.jpg",
+      "Images1/MD_icon.jpg",
+      "Images1/MDM_icon.jpg",
+      "Images1/NET_symbol.jpg",
+      "Images1/NMND_symbol.jpg",
+      "Images1/PF_icon.jpg",
+      "Images1/PP_icon.jpg",
+      "Images1/r_symbol.jpg",
+      "Images1/rev_icon.jpg",
+      "Images1/Segement_E_05.jpg",
+      "Images1/Segment_A_01.jpg",
+      "Images1/Segment_A_02.jpg",
+      "Images1/Segment_A_03.jpg",
+      "Images1/Segment_A_04.jpg",
+      "Images1/Segment_A_05.jpg",
+      "Images1/Segment_A_06.jpg",
+      "Images1/Segment_A_07.jpg",
+      "Images1/Segment_A.jpg",
+      "Images1/Segment_B_01.jpg",
+      "Images1/Segment_B_02.jpg",
+      "Images1/Segment_B_03.jpg",
+      "Images1/Segment_B_04.jpg",
+      "Images1/Segment_B_06.jpg",
+      "Images1/Segment_B_07.jpg",
+      "Images1/Segment_B.jpg",
+      "Images1/Segment_C_01.jpg",
+      "Images1/Segment_C_02.jpg",
+      "Images1/Segment_C_03.jpg",
+      "Images1/Segment_C_04.jpg",
+      "Images1/Segment_C_05.jpg",
+      "Images1/Segment_C_06.jpg",
+      "Images1/Segment_C_07.jpg",
+      "Images1/Segment_C.jpg",
+      "Images1/Segment_D_01.jpg",
+      "Images1/Segment_D_02.jpg",
+      "Images1/Segment_D_03.jpg",
+      "Images1/Segment_D_04.jpg",
+      "Images1/Segment_D_05.jpg",
+      "Images1/Segment_D_06.jpg",
+      "Images1/Segment_D_07.jpg",
+      "Images1/Segment_D.jpg",
+      "Images1/Segment_E_01.jpg",
+      "Images1/Segment_E_02.jpg",
+      "Images1/Segment_E_03.jpg",
+      "Images1/Segment_E_04.jpg",
+      "Images1/Segment_E_05.jpg",
+      "Images1/Segment_E_06.jpg",
+      "Images1/Segment_E_07.jpg",
+      "Images1/Segment_E_08.jpg",
+      "Images1/Segment_E.jpg",
+      "Images1/Segment_F_01.jpg",
+      "Images1/Segment_F_02.jpg",
+      "Images1/Segment_F_03.jpg",
+      "Images1/Segment_F_04.jpg",
+      "Images1/Segment_F_05.jpg",
+      "Images1/Segment_F_06.jpg",
+      "Images1/Segment_F.jpg",
+      "Images1/Segment_G_01.jpg",
+      "Images1/Segment_G_02.jpg",
+      "Images1/Segment_G_03.jpg",
+      "Images1/Segment_G_04.jpg",
+      "Images1/Segment_G_05.jpg",
+      "Images1/Segment_G_06.jpg",
+      "Images1/Segment_G.jpg",
+      "Images1/Signal_1.jpg",
+      "Images1/switch_icon.jpg",
+      "Images1/T_symbol.jpg",
+      "Images1/thermometer_icon.jpg",
+      "Images1/time_icon.jpg",
+      "Images1/TOP_symbol.jpg",
+      "Images1/z_icon.jpg"
+    ];
+
+    let currentIndex = 0;
+    let slidesCreated = false;
+    const container = document.querySelector('.slideshow-container');
+    const loading = document.getElementById('loading');
+
+    // Preload images and create slides
+    function preloadImages() {
+      let loadedCount = 0;
+      const totalImages = images.length;
+
+      images.forEach((imagePath, index) => {
+        const img = new Image();
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            createSlides();
+            startSlideshow();
+          }
+        };
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${imagePath}`);
+          loadedCount++;
+          if (loadedCount === totalImages) {
+            createSlides();
+            startSlideshow();
+          }
+        };
+        img.src = imagePath;
+      });
+    }
+
+    function createSlides() {
+      loading.style.display = 'none';
+      
+      images.forEach((imagePath, index) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        if (index === 0) slide.classList.add('active');
+        
+        const img = document.createElement('img');
+        img.src = imagePath;
+        img.alt = `Slide ${index + 1}`;
+        
+        slide.appendChild(img);
+        container.appendChild(slide);
+      });
+      
+      slidesCreated = true;
+    }
+
+    function nextSlide() {
+      if (!slidesCreated) return;
+      
+      const slides = document.querySelectorAll('.slide');
+      slides[currentIndex].classList.remove('active');
+      
+      currentIndex = (currentIndex + 1) % slides.length;
+      slides[currentIndex].classList.add('active');
+    }
+
+    function startSlideshow() {
+      setInterval(nextSlide, 5000);
+    }
+
+    // Start preloading images when page loads
+    window.addEventListener('load', preloadImages);
+  </script>
+</body>
+</html>
